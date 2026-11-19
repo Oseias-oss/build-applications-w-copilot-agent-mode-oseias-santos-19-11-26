@@ -43,22 +43,30 @@ flowchart LR
 
 ## Decisões de implementação
 
-Registre seu plano aqui antes de editar o código.
-
-- Decisão da camada de apresentação:
-- Decisão da camada de lógica:
-- Decisão da camada de dados:
-- Abordagem para registro de atividades:
-- Abordagem para gerenciamento de equipes:
-- Abordagem para o placar:
-- Abordagem para sugestões de treino:
+- **Camada de apresentação:** cada tela consome o cliente compartilhado da API e apresenta estados acessíveis de carregamento, vazio e erro. A interface não acessa modelos nem o banco de dados.
+- **Camada de lógica:** os serviços implementam validação e regras de negócio; as rotas Express traduzem os resultados para os envelopes e códigos HTTP do contrato. Entradas inválidas ou referências inexistentes retornam 4xx, nunca 500 por falha de conversão de ID.
+- **Camada de dados:** modelos Mongoose definem campos obrigatórios, tipos e referências. O seed permanece idempotente e preserva registros não relacionados aos dados de demonstração.
+- **Registro de atividades:** validar tipo, minutos e IDs de pessoa/equipe, confirmando que as referências existem antes de gravar. Calcular `points` como os minutos válidos enviados e `occurredAt` no servidor; não aceitar esses valores como autoridade do cliente.
+- **Gerenciamento de equipes:** exigir `name`, manter `mascot` e os integrantes informados, e usar uma lista vazia quando `members` não for enviado. A resposta de criação e a listagem mantêm os valores enviados.
+- **Placar:** somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
+- **Sugestões de treino:** localizar a pessoa pelo e-mail; priorizar o foco da atividade mais recente e, na ausência de atividade, usar `fitnessGoal`. Incluir uma justificativa legível; e-mail desconhecido retorna 4xx.
 
 ## Plano de testes
 
-Registre os comandos executados e o significado de cada falha.
+Linha de base observada em 2026-11-19, antes da implementação:
 
-- Testes da camada de dados: `npm run test:data --prefix octofit-tracker/backend`
-- Testes da API: `npm run test:api --prefix octofit-tracker/backend`
-- Testes do frontend: `npm test --prefix octofit-tracker/frontend`
-- Compilação do backend: `npm run build --prefix octofit-tracker/backend`
-- Compilação do frontend: `npm run build --prefix octofit-tracker/frontend`
+| Comando executado | Resultado | Significado das falhas |
+| --- | --- | --- |
+| `npm test --prefix octofit-tracker/backend -- --reporter=dot` | 8 falhas e 1 aprovação | Quatro falhas nos requisitos dos modelos; quatro nos contratos da API. O seed passou. As rotas de criação retornam `501` em vez de validar entradas, o placar está vazio e as sugestões não atendem ao contrato de foco/justificativa. |
+| `npm test --prefix octofit-tracker/frontend -- --reporter=dot` | 15 falhas | As telas ainda exibem “Implementação pendente” e não atendem aos contratos de dados, carregamento, estados vazios e erros acessíveis. |
+
+Após implementar cada camada, repetir primeiro o teste correspondente:
+
+- Dados e seed: `npm run test:data --prefix octofit-tracker/backend`
+- API: `npm run test:api --prefix octofit-tracker/backend`
+- Frontend: `npm test --prefix octofit-tracker/frontend`
+
+Verificações de compilação ainda não executadas nesta linha de base; executar antes de publicar:
+
+- Backend: `npm run build --prefix octofit-tracker/backend`
+- Frontend: `npm run build --prefix octofit-tracker/frontend`
