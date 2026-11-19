@@ -43,13 +43,13 @@ flowchart LR
 
 ## Decisões de implementação
 
-- **Camada de apresentação:** cada tela consome o cliente compartilhado da API e apresenta estados acessíveis de carregamento, vazio e erro. A interface não acessa modelos nem o banco de dados.
-- **Camada de lógica:** os serviços implementam validação e regras de negócio; as rotas Express traduzem os resultados para os envelopes e códigos HTTP do contrato. Entradas inválidas ou referências inexistentes retornam 4xx, nunca 500 por falha de conversão de ID.
-- **Camada de dados:** modelos Mongoose definem campos obrigatórios, tipos e referências. O seed permanece idempotente e preserva registros não relacionados aos dados de demonstração.
-- **Registro de atividades:** validar tipo, minutos e IDs de pessoa/equipe, confirmando que as referências existem antes de gravar. Calcular `points` como os minutos válidos enviados e `occurredAt` no servidor; não aceitar esses valores como autoridade do cliente.
-- **Gerenciamento de equipes:** exigir `name`, manter `mascot` e os integrantes informados, e usar uma lista vazia quando `members` não for enviado. A resposta de criação e a listagem mantêm os valores enviados.
-- **Placar:** somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
-- **Sugestões de treino:** localizar a pessoa pelo e-mail; priorizar o foco da atividade mais recente e, na ausência de atividade, usar `fitnessGoal`. Incluir uma justificativa legível; e-mail desconhecido retorna 4xx.
+- Decisão da camada de apresentação: cada tela consome o cliente compartilhado da API e apresenta estados acessíveis de carregamento, vazio e erro. A interface não acessa modelos nem o banco de dados.
+- Decisão da camada de lógica: os serviços implementam validação e regras de negócio; as rotas Express traduzem os resultados para os envelopes e códigos HTTP do contrato. Entradas inválidas ou referências inexistentes retornam 4xx, nunca 500 por falha de conversão de ID.
+- Decisão da camada de dados: modelos Mongoose definem campos obrigatórios, tipos e referências. O seed permanece idempotente e preserva registros não relacionados aos dados de demonstração.
+- Abordagem para registro de atividades: validar tipo, minutos e IDs de pessoa/equipe, confirmando que as referências existem antes de gravar. Calcular `points` como os minutos válidos enviados e `occurredAt` no servidor; não aceitar esses valores como autoridade do cliente.
+- Abordagem para gerenciamento de equipes: exigir `name`, manter `mascot` e os integrantes informados, e usar uma lista vazia quando `members` não for enviado. A resposta de criação e a listagem mantêm os valores enviados.
+- Abordagem para o placar: somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições começando em 1.
+- Abordagem para sugestões de treino: localizar a pessoa pelo e-mail; priorizar o foco da atividade mais recente e, na ausência de atividade, usar `fitnessGoal`. Incluir uma justificativa legível; e-mail desconhecido retorna 4xx.
 
 ## Plano de testes
 
